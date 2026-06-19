@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { ChatMessage } from '../types/chat'
 import { MessageInput } from './MessageInput'
 import { MessageList } from './MessageList'
-import { sendMessageToAssistant } from '../services/chatService'
+import { useSendMessage } from '../hooks/useSendMessage'
 
 const initialMessages: ChatMessage[] = [
   {
@@ -27,7 +27,7 @@ const initialMessages: ChatMessage[] = [
 
 export function ChatPage() {
     const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
-    const [isAssistantTyping, setIsAssistantTyping] = useState(false)
+    const sendMessageMutation = useSendMessage()
 
     async function handleSendMessage(content: string) {
         const userMessage: ChatMessage = {
@@ -38,10 +38,9 @@ export function ChatPage() {
         }
 
         setMessages((currentMessages) => [...currentMessages, userMessage])
-        setIsAssistantTyping(true)
 
         try {
-            const assistantMessage = await sendMessageToAssistant(content)
+            const assistantMessage = await sendMessageMutation.mutateAsync(content)
 
             setMessages((currentMessages) => [...currentMessages, assistantMessage])
         } catch {
@@ -53,8 +52,6 @@ export function ChatPage() {
             }
 
             setMessages((currentMessages) => [...currentMessages, errorMessage])
-        } finally {
-            setIsAssistantTyping(false)
         }
     }
 
@@ -70,8 +67,8 @@ export function ChatPage() {
             </header>
 
             <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col">
-                <MessageList messages={messages} isAssistantTyping={isAssistantTyping} />
-                <MessageInput onSendMessage={handleSendMessage} disabled={isAssistantTyping} />
+                <MessageList messages={messages} isAssistantTyping={sendMessageMutation.isPending} />
+                <MessageInput onSendMessage={handleSendMessage} disabled={sendMessageMutation.isPending} />
             </section>
         </main>
     )
