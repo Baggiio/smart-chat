@@ -1,0 +1,1 @@
+export const chatHistoryQueryKey = ['chat', 'history'] as const
