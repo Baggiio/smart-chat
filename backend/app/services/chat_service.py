@@ -32,7 +32,7 @@ async def send_message(content: str) -> MessageResponse:
         id=str(uuid4()),
         role="assistant",
         content=(
-            f'Você disse: "{content}".'
+            f'Você disse: "{content}". '
             "Em breve essa resposta será gerada com LangChain."
         ),
         createdAt=datetime.now(timezone.utc)

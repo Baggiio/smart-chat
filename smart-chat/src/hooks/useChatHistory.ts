@@ -6,6 +6,6 @@ import { chatHistoryQueryKey } from './chatQueryKeys'
 export function useChatHistory() {
     return useQuery({
         queryKey: chatHistoryQueryKey,
-        queryFn: getChatHistory
+        queryFn: ({ signal }) => getChatHistory(signal)
     })
 }
