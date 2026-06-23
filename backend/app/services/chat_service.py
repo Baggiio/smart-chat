@@ -1,4 +1,4 @@
-from app.services.llm_service import generate_assistant_response
+from app.services.agent_service import generate_agent_response
 from app.schemas.chat import MessageResponse
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -27,7 +27,7 @@ async def send_message(content: str) -> MessageResponse:
 
     history = [("human" if message.role == "user" else "ai", message.content) for message in _messages]
 
-    assistant_content = await generate_assistant_response(history=history, content=content)
+    assistant_content = await generate_agent_response(history=history, content=content)
 
     assistant_message = MessageResponse(
         id=str(uuid4()),
