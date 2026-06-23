@@ -1,1 +1,5 @@
 fastapi[standard]
+langchain
+langchain-openai
+pydantic-settings
+python-dotenv

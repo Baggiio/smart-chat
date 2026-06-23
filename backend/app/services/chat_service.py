@@ -1,4 +1,5 @@
-import asyncio
+from app.services.llm_service import generate_assistant_response
+from app.schemas.chat import MessageResponse
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -24,21 +25,18 @@ async def send_message(content: str) -> MessageResponse:
         createdAt=datetime.now(timezone.utc)
     )
 
-    _messages.append(user_message)
+    history = [("human" if message.role == "user" else "ai", message.content) for message in _messages]
 
-    await asyncio.sleep(0.8)
+    assistant_content = await generate_assistant_response(history=history, content=content)
 
     assistant_message = MessageResponse(
         id=str(uuid4()),
         role="assistant",
-        content=(
-            f'Você disse: "{content}". '
-            "Em breve essa resposta será gerada com LangChain."
-        ),
+        content=assistant_content,
         createdAt=datetime.now(timezone.utc)
     )
 
-    _messages.append(assistant_message)
+    _messages.extend([user_message, assistant_message])
 
     return assistant_message
 
