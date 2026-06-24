@@ -5,3 +5,4 @@ pydantic-settings
 python-dotenv
 langchain-postgres
 psycopg[binary]
+langchain-text-splitters
