@@ -13,6 +13,8 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
+    postgres_url: SecretStr
+
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
