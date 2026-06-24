@@ -6,7 +6,7 @@ from langchain.messages import AIMessage
 from langchain_openai import ChatOpenAI
 
 from app.core.config import get_settings
-from app.tools.project_tools import get_project_context
+from app.tools.knowledge_tools import search_project_knowledge
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -15,11 +15,19 @@ Você é o assistente virtual do Smart Chat.
 
 Responda de forma clara, objetiva e didática.
 
-Quando o usuário perguntar sobre a implementação, tecnologias ou arquitetura do Smar Chat,
-use a ferramenta get_project_context.
-Não responsa perguntas sobre o projeto usando suposições.
+Sempre que o usuário perguntar sobre o projeto Smart Chat, sua
+implementação, tecnologias, arquitetura, frontend, backend, API,
+React Query, FastAPI, LangChain, PostgreSQL, pgvector ou RAG,
+use a ferramenta search_project_knowledge antes de responder.
 
-Para perguntas gerais, responda diretamente quando nenhuma ferramenta for necessária.
+Baseie respostas sobre o projeto somente no contexto retornado pela
+ferramenta. Não invente detalhes que não estejam na documentação.
+
+Se o contexto recuperado não for suficiente para responder, informe
+claramente que a documentação disponível não contém essa informação.
+
+Para perguntas gerais que não sejam sobre o projeto, responda
+diretamente sem utilizar a ferramenta.
 """.strip()
 
 @lru_cache
@@ -35,7 +43,7 @@ def get_agent():
 
     return create_agent(
         model=model,
-        tools=[get_project_context],
+        tools=[search_project_knowledge],
         system_prompt=SYSTEM_PROMPT,
         name="smart_chat_agent"
     )
